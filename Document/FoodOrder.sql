@@ -82,12 +82,15 @@ SELECT * FROM dbo.NhanVien
 INSERT INTO NhanVien (IdChucVu ,HoTen, GioiTinh, NgaySinh, Sdt, TaiKhoan, MatKhau, NgayTao, TrangThai)
 VALUES ('E7727574-07E0-46B4-86A7-E4931C9548EC' , N'Nguyễn Việt', 1, '2000-02-02', '0999999999', 'vietnt', '123456', GETDATE(), 1)
 
+INSERT INTO NhanVien (IdChucVu ,HoTen, GioiTinh, NgaySinh, Sdt, TaiKhoan, MatKhau, NgayTao, TrangThai)
+VALUES ('BB96B457-4C9E-4573-BC8A-E0F171F429E7' , N'Nguyễn Tuấn', 1, '2003-03-03', '0999999999', 'tuannv', '123456', GETDATE(), 1)
 
 
 
+SELECT * FROM dbo.DanhMucMonAn
+INSERT INTO DanhMucMonAn (TenDanhMuc, NgayTao, TrangThai) VALUES (N'Gà', GETDATE(), 1)
 
-DROP DATABASE FoodOrder
+DELETE FROM dbo.DanhMucMonAn WHERE Id = 'B0759493-3B39-4141-AB82-19B874C53741'
 
-
-
+UPDATE dbo.DanhMucMonAn SET TrangThai = 0 WHERE Id = '1ABC2454-42F3-431D-8832-C4C3FFDA48DC'
 

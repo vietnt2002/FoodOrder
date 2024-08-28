@@ -23,4 +23,14 @@ public class FoodOrderAdminController {
         return "/view_admin/danh-muc-mon-an.jsp";
     }
 
+    @GetMapping("quan-ly-ban")
+    public String getBan (){
+        return "/view_admin/quan-ly-ban.jsp";
+    }
+
+    @GetMapping("quan-ly-goi-mon")
+    public String getGoiMon (){
+        return "/view_admin/quan-ly-goi-mon.jsp";
+    }
+
 }
