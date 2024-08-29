@@ -189,7 +189,7 @@
                         document.getElementById("tenDM").value = danhMuc.tenDanhMuc;
                         document.getElementById("trangThai").value = danhMuc.trangThai;
 
-                        // Đảm bảo chỉ gắn sự kiện `submit` một lần
+                        // Sửa danh mục
                         const form = document.getElementById("suaDanhMuc");
                         form.onsubmit = function(e) {
                             e.preventDefault();

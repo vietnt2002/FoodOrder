@@ -20,7 +20,7 @@ public class FoodOrderAdminController {
 
     @GetMapping("quan-ly-danh-muc")
     public String getDanhMuc (){
-        return "/view_admin/danh-muc-mon-an.jsp";
+        return "/view_admin/danh-muc-quan-ly-ban.jsp";
     }
 
     @GetMapping("quan-ly-ban")

@@ -10,7 +10,7 @@ import java.util.Objects;
 @Entity
 public class Ban {
     private String id;
-    private String tenBan;
+    private Integer tenBan;
     private String qrCode;
     private LocalDateTime ngayTao;
     private int trangThai;
@@ -28,11 +28,11 @@ public class Ban {
 
     @Basic
     @Column(name = "TenBan")
-    public String getTenBan() {
+    public Integer getTenBan() {
         return tenBan;
     }
 
-    public void setTenBan(String tenBan) {
+    public void setTenBan(Integer tenBan) {
         this.tenBan = tenBan;
     }
 

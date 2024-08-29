@@ -1,9 +1,11 @@
 package com.example.food_order.restcontroller;
 
+import com.example.food_order.entities.Ban;
 import com.example.food_order.entities.DanhMucMonAn;
 import com.example.food_order.entities.MonAn;
 import com.example.food_order.entities.NhanVien;
 import com.example.food_order.repositories.*;
+import com.example.food_order.requests.BanRequest;
 import com.example.food_order.requests.DanhMucMonAnRequest;
 import com.example.food_order.requests.MonAnRequest;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -167,5 +169,44 @@ public class FoodOrderAdminRestController {
 
 
     //Bàn
+    @GetMapping("list-ban")
+    ResponseEntity<List<Ban>> getAllBan(){
+        return ResponseEntity.ok(banRepo.findAll());
+    }
 
+    @GetMapping("list-ban-hoat-dong")
+    ResponseEntity<List<Ban>> getAllBanByTrangThai(){
+        return ResponseEntity.ok(banRepo.getAllByTrangThai(BanRepository.HOAT_DONG));
+    }
+
+    @GetMapping("chi-tiet-ban/{id}")
+    ResponseEntity<Ban> banDetail(@PathVariable("id") String id) {
+        return ResponseEntity.ok(banRepo.findById(id).get());
+    }
+
+    @PostMapping("them-ban")
+    ResponseEntity<Ban> themBan(@RequestBody BanRequest banRequest){
+        Ban ban = new Ban();
+        ban.setTenBan(banRequest.getTenBan());
+        ban.setQrCode(banRequest.getQrCode());
+        ban.setNgayTao(LocalDateTime.now());
+        ban.setTrangThai(BanRepository.HOAT_DONG);
+        return ResponseEntity.ok(banRepo.save(ban));
+    }
+
+    @PutMapping("sua-ban/{id}")
+    ResponseEntity<Ban> suaBan(@PathVariable("id") String id, @RequestBody BanRequest banRequest){
+        Ban ban = banRepo.findById(banRequest.getId()).get();
+        ban.setTenBan(banRequest.getTenBan());
+        ban.setQrCode(banRequest.getQrCode());
+        ban.setTrangThai(banRequest.getTrangThai());
+        return ResponseEntity.ok(banRepo.save(ban));
+    }
+
+    @DeleteMapping("xoa-ban/{id}")
+    ResponseEntity<Ban> xoaBan(@PathVariable("id") String id){
+        Ban ban = banRepo.findById(id).get();
+        banRepo.delete(ban);
+        return ResponseEntity.ok(ban);
+    }
 }
