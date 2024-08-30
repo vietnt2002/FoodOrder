@@ -12,6 +12,7 @@ public class Ban {
     private String id;
     private Integer tenBan;
     private String qrCode;
+    private String url;
     private LocalDateTime ngayTao;
     private int trangThai;
 
@@ -47,6 +48,16 @@ public class Ban {
     }
 
     @Basic
+    @Column(name = "Url")
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Basic
     @Column(name = "NgayTao")
     public LocalDateTime getNgayTao() {
         return ngayTao;
@@ -71,11 +82,11 @@ public class Ban {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ban ban = (Ban) o;
-        return trangThai == ban.trangThai && Objects.equals(id, ban.id) && Objects.equals(tenBan, ban.tenBan) && Objects.equals(qrCode, ban.qrCode) && Objects.equals(ngayTao, ban.ngayTao);
+        return trangThai == ban.trangThai && Objects.equals(id, ban.id) && Objects.equals(tenBan, ban.tenBan) && Objects.equals(qrCode, ban.qrCode) && Objects.equals(url, ban.url) && Objects.equals(ngayTao, ban.ngayTao);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tenBan, qrCode, ngayTao, trangThai);
+        return Objects.hash(id, tenBan, qrCode, url, ngayTao, trangThai);
     }
 }

@@ -116,11 +116,13 @@
             .then(data => {
                 // Duyệt qua danh sách nhân viên và kiểm tra thông tin
                 var checkLogin = false;
+                var idNhanVien = "";
                 var hoTen = "";
                 var chucVu = "";
                 data.forEach(nhanVien => {
                     if (nhanVien.taiKhoan == username && nhanVien.matKhau == password) {
                         checkLogin = true;
+                        idNhanVien = nhanVien.id;
                         hoTen = nhanVien.hoTen;
                         chucVu = nhanVien.idChucVu.ten;
                     }
@@ -128,6 +130,7 @@
                 console.log(hoTen);
                 console.log(chucVu);
                 if (checkLogin){
+                    localStorage.setItem("idNhanVien", idNhanVien);
                     localStorage.setItem("hoTen", hoTen);
                     localStorage.setItem("chucVu", chucVu);
                     Toast.fire({

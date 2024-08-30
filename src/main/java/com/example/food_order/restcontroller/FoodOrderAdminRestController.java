@@ -95,6 +95,11 @@ public class FoodOrderAdminRestController {
         return ResponseEntity.ok(monAnRepo.findAll());
     }
 
+    @GetMapping("list-mon-an-hoat-dong")
+    ResponseEntity<List<MonAn>> getAllMonAnHoatDong(){
+        return ResponseEntity.ok(monAnRepo.getAllByTrangThai(MonAnRepository.HOAT_DONG));
+    }
+
     @GetMapping("chi-tiet-mon-an/{id}")
     ResponseEntity<MonAn> monAnDetail(@PathVariable("id") String id) {
         return ResponseEntity.ok(monAnRepo.findById(id).get());
@@ -167,7 +172,6 @@ public class FoodOrderAdminRestController {
         return ResponseEntity.ok(monAn);
     }
 
-
     //Bàn
     @GetMapping("list-ban")
     ResponseEntity<List<Ban>> getAllBan(){
@@ -189,6 +193,7 @@ public class FoodOrderAdminRestController {
         Ban ban = new Ban();
         ban.setTenBan(banRequest.getTenBan());
         ban.setQrCode(banRequest.getQrCode());
+        ban.setUrl("http://localhost:8080/client/menu");
         ban.setNgayTao(LocalDateTime.now());
         ban.setTrangThai(BanRepository.HOAT_DONG);
         return ResponseEntity.ok(banRepo.save(ban));
@@ -209,4 +214,15 @@ public class FoodOrderAdminRestController {
         banRepo.delete(ban);
         return ResponseEntity.ok(ban);
     }
+
+    @GetMapping("find-by-ten-ban/{ten}")
+    ResponseEntity<Ban> findByTen(@PathVariable("ten") int tenBan) {
+        return ResponseEntity.ok(banRepo.findByTenBan(tenBan));
+    }
+
+
 }
+
+
+// Api web
+
