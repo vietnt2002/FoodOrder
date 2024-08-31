@@ -28,7 +28,7 @@
                 <a href="/client/menu" class="nav-item nav-link">Menu</a>
                 <div class="cart-container" style="position: relative">
                     <a href="/client/gio-hang" class="nav-item nav-link"><i class="bi bi-basket2-fill"></i></a>
-                    <span class="quantityCart">3</span>
+                    <span class="quantityCart"></span>
                 </div>
             </div>
             <a href="" class="btn btn-primary py-2 px-4">Book A Table</a>

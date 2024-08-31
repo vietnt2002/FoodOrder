@@ -3,6 +3,7 @@ package com.example.food_order.entities;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -83,7 +84,7 @@ public class HoaDon {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HoaDon hoaDon = (HoaDon) o;
-        return tongTien == hoaDon.tongTien && trangThai == hoaDon.trangThai && Objects.equals(id, hoaDon.id) && Objects.equals(ma, hoaDon.ma) && Objects.equals(ngayTao, hoaDon.ngayTao) && Objects.equals(ngayThanhToan, hoaDon.ngayThanhToan);
+        return trangThai == hoaDon.trangThai && Objects.equals(id, hoaDon.id) && Objects.equals(ma, hoaDon.ma) && Objects.equals(tongTien, hoaDon.tongTien) && Objects.equals(ngayTao, hoaDon.ngayTao) && Objects.equals(ngayThanhToan, hoaDon.ngayThanhToan);
     }
 
     @Override

@@ -127,6 +127,7 @@
                         chucVu = nhanVien.idChucVu.ten;
                     }
                 });
+                console.log("idNV", idNhanVien);
                 console.log(hoTen);
                 console.log(chucVu);
                 if (checkLogin){

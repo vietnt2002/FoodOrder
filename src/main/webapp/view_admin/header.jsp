@@ -36,8 +36,8 @@
                     <a href="/admin/quan-ly-danh-muc" class="dropdown-item">Danh mục món ăn</a>
                 </div>
             </div>
+            <a href="/admin/quan-ly-hoa-don" class="nav-item nav-link"><i class="bi bi-journal-text"></i>Quản lý hóa đơn</a>
             <a href="/admin/quan-ly-ban" class="nav-item nav-link"><i class="bi bi-table"></i>Quản lý bàn</a>
-            <a href="/admin/quan-ly-goi-mon" class="nav-item nav-link"><i class="bi bi-journal-text"></i>Khách gọi món</a>
             <a href="/admin/quan-ly-nhan-vien" class="nav-item nav-link"><i class="bi bi-person-bounding-box"></i>Nhân viên</a>
             <a href="/admin/quan-ly-khach-hang" class="nav-item nav-link"><i class="bi bi-person-bounding-box"></i>Khách hàng</a>
             <div class="nav-item dropdown">

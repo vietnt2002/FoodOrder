@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class HoaDonChiTiet {
+public class GioHang {
     private String id;
     private int soLuong;
     private BigDecimal giaTien;
     private LocalDateTime ngayTao;
     private int trangThai;
-    private HoaDon idHoaDon;
+    private Ban idBan;
     private MonAn idMonAn;
 
     @Id
@@ -71,8 +71,8 @@ public class HoaDonChiTiet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        HoaDonChiTiet that = (HoaDonChiTiet) o;
-        return soLuong == that.soLuong && giaTien == that.giaTien && trangThai == that.trangThai && Objects.equals(id, that.id) && Objects.equals(ngayTao, that.ngayTao);
+        GioHang gioHang = (GioHang) o;
+        return soLuong == gioHang.soLuong && giaTien == gioHang.giaTien && trangThai == gioHang.trangThai && Objects.equals(id, gioHang.id) && Objects.equals(ngayTao, gioHang.ngayTao);
     }
 
     @Override
@@ -81,13 +81,13 @@ public class HoaDonChiTiet {
     }
 
     @ManyToOne
-    @JoinColumn(name = "IdHoaDon", referencedColumnName = "Id", nullable = false)
-    public HoaDon getIdHoaDon() {
-        return idHoaDon;
+    @JoinColumn(name = "IdBan", referencedColumnName = "Id", nullable = false)
+    public Ban getIdBan() {
+        return idBan;
     }
 
-    public void setIdHoaDon(HoaDon hoaDonByIdHoaDon) {
-        this.idHoaDon = hoaDonByIdHoaDon;
+    public void setIdBan(Ban banByIdBan) {
+        this.idBan = banByIdBan;
     }
 
     @ManyToOne

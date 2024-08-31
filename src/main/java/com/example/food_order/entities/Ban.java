@@ -1,7 +1,6 @@
 package com.example.food_order.entities;
 
 import jakarta.persistence.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -10,11 +9,11 @@ import java.util.Objects;
 @Entity
 public class Ban {
     private String id;
-    private Integer tenBan;
+    private int tenBan;
     private String qrCode;
-    private String url;
     private LocalDateTime ngayTao;
     private int trangThai;
+    private String url;
 
     @Id
     @Column(name = "Id")
@@ -29,11 +28,11 @@ public class Ban {
 
     @Basic
     @Column(name = "TenBan")
-    public Integer getTenBan() {
+    public int getTenBan() {
         return tenBan;
     }
 
-    public void setTenBan(Integer tenBan) {
+    public void setTenBan(int tenBan) {
         this.tenBan = tenBan;
     }
 
@@ -45,16 +44,6 @@ public class Ban {
 
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
-    }
-
-    @Basic
-    @Column(name = "Url")
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     @Basic
@@ -77,16 +66,26 @@ public class Ban {
         this.trangThai = trangThai;
     }
 
+    @Basic
+    @Column(name = "Url")
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ban ban = (Ban) o;
-        return trangThai == ban.trangThai && Objects.equals(id, ban.id) && Objects.equals(tenBan, ban.tenBan) && Objects.equals(qrCode, ban.qrCode) && Objects.equals(url, ban.url) && Objects.equals(ngayTao, ban.ngayTao);
+        return tenBan == ban.tenBan && trangThai == ban.trangThai && Objects.equals(id, ban.id) && Objects.equals(qrCode, ban.qrCode) && Objects.equals(ngayTao, ban.ngayTao) && Objects.equals(url, ban.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tenBan, qrCode, url, ngayTao, trangThai);
+        return Objects.hash(id, tenBan, qrCode, ngayTao, trangThai, url);
     }
 }

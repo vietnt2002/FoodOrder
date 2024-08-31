@@ -1,22 +1,23 @@
 package com.example.food_order.requests;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-//@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@MonAnRequest")
-public class MonAnRequest {
+public class HoaDonChiTietRequest {
     private String id;
-    private String hinhAnh;
-    private String tenMon;
+    private int soLuong;
     private BigDecimal giaTien;
-    private String moTa;
     private LocalDateTime ngayTao;
     private int trangThai;
-    private String idDanhMuc;
+    private String idHoaDon;
+    private String idMonAn;
 }

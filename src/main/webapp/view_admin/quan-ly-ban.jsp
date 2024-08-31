@@ -647,6 +647,7 @@
                     text: "Đăng xuất thành công",
                     icon: "success"
                 }).then(() => {
+                    localStorage.setItem('idNhanVien', '');
                     location.href = '/admin/dang-nhap-view';
                 });
             }

@@ -94,7 +94,7 @@
                     <a href="/client/menu" class="nav-item nav-link">Menu</a>
                     <div class="cart-container" style="position: relative">
                         <a href="/client/gio-hang" class="nav-item nav-link"><i class="bi bi-basket2-fill"></i></a>
-                        <span class="quantityCart">3</span>
+                        <span class="quantityCart" id="quantityCart"></span>
                     </div>
                 </div>
                 <a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
@@ -143,30 +143,6 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 </div>
 
-<!-- Modal nhập số lượng sản phẩm -->
-<div class="modal fade" id="modalQuetQR" tabindex="-1" aria-labelledby="exampleQuetQR" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleQuetQR">Đưa mã QR lên trước camera</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="section">
-                        <div id="my-qr-reader">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="stopScan">Đóng</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <!-- Modal nhập số lượng -->
 <div class="modal fade" id="modalNhapSoLuong" tabindex="-1" aria-labelledby="exampleNhapSoLuong" aria-hidden="true">
     <div class="modal-dialog">
@@ -175,16 +151,125 @@
                 <h5 class="modal-title" id="exampleNhapSoLuong">Nhập số lượng món ăn: </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Đóng</button>
-                <button type="submit" class="btn btn-primary" >Thêm giỏ hàng</button>
-            </div>
+            <form id="themGioHang">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="soLuong" class="form-label">Nhập số lượng: </label>
+                        <input type="number" class="form-control" name="soLuong" id="soLuong" min="1" value="1">
+                        <input type="hidden" id="giaTienGH" value="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Đóng</button>
+                    <button type="submit" class="btn btn-primary" >Thêm giỏ hàng</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    //Thêm giỏ hàng
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.tagName === 'BUTTON' && e.target.id.startsWith('idMonAn_')) {
+                e.preventDefault();
+
+                var idMonAn = e.target.id.replace("idMonAn_", "");
+                var idBan = localStorage.getItem('idBan');
+                console.log(idMonAn);
+
+                fetch(`/api/food/chi-tiet-mon-an/` + idMonAn, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(monAn => {
+
+                        // Thêm giỏ hàng
+                        const form = document.getElementById("themGioHang");
+                        form.onsubmit = function(e) {
+                            e.preventDefault();
+                            var soLuong = document.getElementById("soLuong").value.trim();
+                            var giaTien = monAn.giaTien;
+                            if (!soLuong){
+                                Toast.fire({
+                                    icon: "error",
+                                    title: "Không được để trống số lượng!"
+                                });
+                                return;
+                            }
+                            const data = {
+                                idBan: idBan,
+                                idMonAn: idMonAn,
+                                soLuong: soLuong,
+                                giaTien: giaTien
+                            };
+
+                            const requestOptions = {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(data),
+                            };
+
+                            fetch('/api/food/them-gio-hang', requestOptions)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    Toast.fire({
+                                        icon: "success",
+                                        title: "Thêm món thành công"
+                                    });
+                                    loadSoLuongGioHang();
+                                    setTimeout(() => {
+                                        var myModal = bootstrap.Modal.getInstance(document.getElementById('modalNhapSoLuong'));
+                                        myModal.hide();
+                                        document.getElementById('soLuong').value = 1;
+                                    }, 1500);
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        };
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+</script>
+
+<script>
+    //Số lượng giỏ hàng
+    function loadSoLuongGioHang() {
+        var idBan = localStorage.getItem('idBan');
+        fetch(`/api/food/get-so-luong-gio-hang/` + idBan, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(soLuong => {
+                console.log("SL:"+soLuong)
+                if (soLuong == null || soLuong == ''){
+                    document.getElementById("quantityCart").textContent = '0';
+                }else {
+                    document.getElementById("quantityCart").textContent = soLuong;
+                }
+
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    loadSoLuongGioHang();
+</script>
 
 <script>
     //Danh sách món ăn hoạt động
@@ -222,7 +307,7 @@
                         '<span>'+ tenMon +'</span>' +
                         '</h5>' +
                         '<h5 class="d-flex justify-content-between">' +
-                        '<span class="text-primary">'+ giaTien +'</span>' +
+                        '<span class="text-primary">'+ giaTien +' vnd</span>' +
                         '</h5>' +
                         '<small class="fst-italic">'+ moTa +'</small>' +
                         '<div>' +
@@ -245,24 +330,20 @@
 </script>
 
 <script>
-    //Tăng giảm số lượng
-    var btnLeft = document.getElementById('left');
-    var btnRight = document.getElementById('right');
-    btnLeft.onclick = function () {
-        var soLuong = document.getElementById('soLuong').value;
-        var soLuongMoi;
-        if (soLuong > 1) {
-            soLuongMoi = soLuong - 1;
-            document.getElementById('soLuong').value = soLuongMoi;
-        } else {
-            document.getElementById('soLuong').value = 1;
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
         }
-    }
-    btnRight.onclick = function () {
-        var soLuong = document.getElementById('soLuong').value;
-        soLuong++;
-        document.getElementById('soLuong').value = soLuong;
-    }
+    });
+    // document.getElementById("hoTenLogin").textContent = localStorage.getItem("hoTen");
+    // document.getElementById("chucVuLogin").textContent = localStorage.getItem("chucVu");
+    // document.getElementById("hoTenDangNhap").textContent = localStorage.getItem("hoTen");
 </script>
 
 <!-- JavaScript Libraries -->

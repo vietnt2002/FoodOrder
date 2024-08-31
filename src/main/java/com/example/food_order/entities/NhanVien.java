@@ -3,7 +3,6 @@ package com.example.food_order.entities;
 import jakarta.persistence.*;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -52,7 +51,6 @@ public class NhanVien {
     }
 
     @Basic
-    @Temporal(TemporalType.DATE)
     @Column(name = "NgaySinh")
     public Date getNgaySinh() {
         return ngaySinh;
