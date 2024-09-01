@@ -14,15 +14,18 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
     public static final int HOAN_THANH_MON  = 2;
     public static final int DA_THANH_TOAN  = 3;
 
-    @Query(value = "SELECT COUNT(*) FROM HoaDon",nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM HoaDon ",nativeQuery = true)
     Integer getSoLuongHoaDon();
+
+    @Query(value = "SELECT COUNT(*) FROM HoaDon WHERE TrangThai = ?1",nativeQuery = true)
+    Integer getSoLuongHoaDonByTrangThai(int trangThai);
 
     @Query("select hd from HoaDon hd where hd.idBan.id = ?1 and hd.trangThai = ?2")
     HoaDon findByIdBanAndTrangThai(String idBan, int trangThai);
 
-    @Query("select hd from HoaDon hd order by hd.trangThai asc ")
+    @Query("select hd from HoaDon hd order by hd.trangThai asc , hd.ma desc ")
     List<HoaDon> getAllHoaDon();
 
-    @Query("select hd from HoaDon hd where hd.trangThai = ?1")
+    @Query("select hd from HoaDon hd where hd.trangThai = ?1 order by hd.ma desc ")
     List<HoaDon> getHoaDonByTrangThai(int trangThai);
 }

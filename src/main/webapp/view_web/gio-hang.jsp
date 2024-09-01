@@ -147,31 +147,6 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 </div>
 
-<!-- Modal nhập số lượng -->
-<%--<div class="modal fade" id="modalNhapSoLuong" tabindex="-1" aria-labelledby="exampleNhapSoLuong" aria-hidden="true">--%>
-<%--    <div class="modal-dialog">--%>
-<%--        <div class="modal-content">--%>
-<%--            <div class="modal-header">--%>
-<%--                <h5 class="modal-title" id="exampleNhapSoLuong">Nhập số lượng món ăn: </h5>--%>
-<%--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>--%>
-<%--            </div>--%>
-<%--            <form id="themGioHang">--%>
-<%--                <div class="modal-body">--%>
-<%--                    <div class="mb-3">--%>
-<%--                        <label for="soLuong" class="form-label">Nhập số lượng: </label>--%>
-<%--                        <input type="number" class="form-control" name="soLuong" id="soLuong" min="1" value="1">--%>
-<%--                        <input type="hidden" id="giaTienGH" value="">--%>
-<%--                    </div>--%>
-<%--                </div>--%>
-<%--                <div class="modal-footer">--%>
-<%--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Đóng</button>--%>
-<%--                    <button type="submit" class="btn btn-primary" >Thêm giỏ hàng</button>--%>
-<%--                </div>--%>
-<%--            </form>--%>
-<%--        </div>--%>
-<%--    </div>--%>
-<%--</div>--%>
-
 <script>
     //Đặt hàng
     var idBan = localStorage.getItem('idBan');
@@ -211,7 +186,7 @@
                 setTimeout(() => {
                     location.href = '/client/menu';
                 }, 3000);
-
+                localStorage.setItem('checkTiengChuong', true);
             })
             .catch(error => {
                 console.error
@@ -252,8 +227,11 @@
                                 icon: "success",
                                 title: "Xóa món ăn khỏi giỏ hàng thành công!"
                             });
-                            loadSoLuongGioHang()
-                            loadDanhSachMonAnGioHang();
+                            // loadSoLuongGioHang();
+                            // loadDanhSachMonAnGioHang();
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500)
                         })
                         .catch(error => console.error('Error:', error));
                 }
@@ -302,8 +280,12 @@
                         '</td>' +
                         '<td>' + tenMon + '</td>' +
                         '<td>' + soLuong + '</td>' +
-                        '<td>' + giaTien + '</td>' +
-                        '<td>' + tongTien + '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(giaTien) +
+                        '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tongTien) +
+                        '</td>' +
                         '<td>' +
                         '<div class="d-inline">' +
                         '<button id="xoa_' + gioHang.id + '" class="btn btn-danger">Xóa</button>' +
@@ -333,8 +315,8 @@
             .then(response => response.json())
             .then(soLuong => {
                 console.log("SL:"+soLuong)
-                if (soLuong == null || soLuong == ''){
-                    document.getElementById("quantityCart").textContent = '0';
+                if (soLuong == null || soLuong == '' || !soLuong){
+                    document.getElementById("quantityCart").textContent = 0;
                 }else {
                     document.getElementById("quantityCart").textContent = soLuong;
                 }

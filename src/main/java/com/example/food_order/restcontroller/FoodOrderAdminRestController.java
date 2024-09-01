@@ -226,7 +226,7 @@ public class FoodOrderAdminRestController {
 
     @GetMapping("list-gio-hang-by-idBan/{idBan}")
     ResponseEntity<List<GioHang>> getAllGioHangByIdBan(@PathVariable("idBan") String idBan) {
-        return ResponseEntity.ok(gioHangRepo.getAllByIdBan(idBan));
+        return ResponseEntity.ok(gioHangRepo.getAllByIdBan(idBan, GioHangRepository.CHO_GUI_MON));
     }
 
     @DeleteMapping("xoa-mon-an-khoi-gio-hang/{id}")
@@ -265,13 +265,15 @@ public class FoodOrderAdminRestController {
         System.out.println("========================================idBan: "+gioHangRequest.getIdBan());
         System.out.println("========================================idMonAn: "+gioHangRequest.getIdMonAn());
 
-        List<GioHang> listGioHang = gioHangRepo.getAllByIdBan(gioHangRequest.getIdBan());
+        List<GioHang> listGioHang = gioHangRepo.getAllByIdBan(gioHangRequest.getIdBan(), GioHangRepository.CHO_GUI_MON);
 
         NhanVien nhanVien = nhanVienRepo.findById(gioHangRequest.getIdNhanVien()).get();
         Ban ban = banRepo.findById(gioHangRequest.getIdBan()).get();
 
-        HoaDon hoaDonCheck = hoaDonRepo.findByIdBanAndTrangThai(gioHangRequest.getIdBan(), HoaDonRepository.CHO_XAC_NHAN);
-        if (hoaDonCheck == null){
+        HoaDon hoaDonTrangThai1 = hoaDonRepo.findByIdBanAndTrangThai(gioHangRequest.getIdBan(), HoaDonRepository.CHO_XAC_NHAN);
+        HoaDon hoaDonTrangThai2 = hoaDonRepo.findByIdBanAndTrangThai(gioHangRequest.getIdBan(), HoaDonRepository.DANG_CHUAN_BI);
+        HoaDon hoaDonTrangThai3 = hoaDonRepo.findByIdBanAndTrangThai(gioHangRequest.getIdBan(), HoaDonRepository.HOAN_THANH_MON);
+        if (hoaDonTrangThai1 == null && hoaDonTrangThai2 == null && hoaDonTrangThai3 == null){
             HoaDon hoaDon = new HoaDon();
             hoaDon.setIdNhanVien(nhanVien);
             hoaDon.setIdBan(ban);
@@ -288,27 +290,35 @@ public class FoodOrderAdminRestController {
                 hoaDonChiTiet.setSoLuong(gioHang.getSoLuong());
                 hoaDonChiTiet.setGiaTien(gioHang.getGiaTien());
                 hoaDonChiTiet.setNgayTao(LocalDateTime.now());
-                hoaDonChiTiet.setTrangThai(HoaDonChiTietRepository.CHUA_THANH_TOAN);
+                hoaDonChiTiet.setTrangThai(HoaDonChiTietRepository.CHUA_HOAN_THANH);
                 hoaDonChiTietRepo.save(hoaDonChiTiet);
             }
         }else {
             for (GioHang gioHang : listGioHang){
                 MonAn monAn = monAnRepo.findById(gioHang.getIdMonAn().getId()).get();
-                HoaDonChiTiet hoaDonChiTietCheck = hoaDonChiTietRepo.findByIdMonAnAndTrangThai(monAn.getId(), HoaDonChiTietRepository.CHUA_THANH_TOAN);
+                HoaDonChiTiet hoaDonChiTietCheck = hoaDonChiTietRepo.findByIdMonAnAndTrangThai(monAn.getId(), HoaDonChiTietRepository.CHUA_HOAN_THANH);
                 if (hoaDonChiTietCheck == null){
                     HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-                    hoaDonChiTiet.setIdHoaDon(hoaDonCheck);
+                    if (hoaDonTrangThai1 == null && hoaDonTrangThai2 == null){
+                        hoaDonChiTiet.setIdHoaDon(hoaDonTrangThai3);
+                    }else if (hoaDonTrangThai2 == null && hoaDonTrangThai3 == null){
+                        hoaDonChiTiet.setIdHoaDon(hoaDonTrangThai1);
+                    }else if (hoaDonTrangThai1 == null && hoaDonTrangThai3 == null){
+                        hoaDonChiTiet.setIdHoaDon(hoaDonTrangThai2);
+                    }
                     hoaDonChiTiet.setIdMonAn(monAn);
                     hoaDonChiTiet.setSoLuong(gioHang.getSoLuong());
                     hoaDonChiTiet.setGiaTien(gioHang.getGiaTien());
                     hoaDonChiTiet.setNgayTao(LocalDateTime.now());
-                    hoaDonChiTiet.setTrangThai(HoaDonChiTietRepository.CHUA_THANH_TOAN);
+                    hoaDonChiTiet.setTrangThai(HoaDonChiTietRepository.CHUA_HOAN_THANH);
                     hoaDonChiTietRepo.save(hoaDonChiTiet);
+
+                    hoaDonChiTiet.getIdHoaDon().setTrangThai(HoaDonRepository.CHO_XAC_NHAN);
+                    hoaDonRepo.save(hoaDonChiTiet.getIdHoaDon());
                 }else {
                     hoaDonChiTietCheck.setSoLuong(hoaDonChiTietCheck.getSoLuong() + gioHang.getSoLuong());
                     hoaDonChiTietRepo.save(hoaDonChiTietCheck);
                 }
-
             }
         }
 
@@ -346,6 +356,72 @@ public class FoodOrderAdminRestController {
         return ResponseEntity.ok(hoaDonRepo.getHoaDonByTrangThai(HoaDonRepository.DA_THANH_TOAN));
     }
 
+    @GetMapping("get-mon-an-da-goi/{idHoaDon}")
+    ResponseEntity<List<HoaDonChiTiet>> getMonAnDaGoi(@PathVariable("idHoaDon") String idHoaDon) {
+        return ResponseEntity.ok(hoaDonChiTietRepo.getHoaDonChiTietByIdHoaDon(idHoaDon));
+    }
+
+    @GetMapping("find-hoa-don-by-id/{idHoaDon}")
+    ResponseEntity<HoaDon> getHoaDon(@PathVariable("idHoaDon") String idHoaDon) {
+        return ResponseEntity.ok(hoaDonRepo.findById(idHoaDon).get());
+    }
+
+    @GetMapping("cap-nhat-trang-thai/{idHoaDon}")
+    ResponseEntity<HoaDon> capNhatTrangThai(@PathVariable("idHoaDon") String idHoaDon) {
+        HoaDon hoaDon = hoaDonRepo.findById(idHoaDon).get();
+        if (hoaDon.getTrangThai() == HoaDonRepository.CHO_XAC_NHAN){
+            hoaDon.setTrangThai(HoaDonRepository.DANG_CHUAN_BI);
+        }else if (hoaDon.getTrangThai() == HoaDonRepository.DANG_CHUAN_BI){
+            hoaDon.setTrangThai(HoaDonRepository.HOAN_THANH_MON);
+            List<HoaDonChiTiet> listHDCTByIdHD = hoaDonChiTietRepo.getHoaDonChiTietByIdHoaDon(hoaDon.getId());
+            for (HoaDonChiTiet hoaDonChiTiet : listHDCTByIdHD){
+                hoaDonChiTiet.setTrangThai(HoaDonChiTietRepository.DA_HOAN_THANH);
+                hoaDonChiTietRepo.save(hoaDonChiTiet);
+            }
+        }
+        return ResponseEntity.ok(hoaDonRepo.save(hoaDon));
+    }
+
+    @PutMapping("thanh-toan")
+    ResponseEntity<HoaDon> thanhToan(@RequestBody HoaDonRequest hoaDonRequest) {
+        List<HoaDonChiTiet> listHDCTByIdHD = hoaDonChiTietRepo.getHoaDonChiTietByIdHoaDon(hoaDonRequest.getId());
+        for (HoaDonChiTiet hoaDonChiTiet : listHDCTByIdHD){
+            hoaDonChiTiet.setTrangThai(HoaDonChiTietRepository.DA_THANH_TOAN);
+            hoaDonChiTietRepo.save(hoaDonChiTiet);
+        }
+
+        HoaDon hoaDon = hoaDonRepo.findById(hoaDonRequest.getId()).get();
+        hoaDon.setTongTien(hoaDonRequest.getTongTien());
+        hoaDon.setNgayThanhToan(LocalDateTime.now());
+        hoaDon.setTrangThai(HoaDonRepository.DA_THANH_TOAN);
+
+        return ResponseEntity.ok(hoaDonRepo.save(hoaDon));
+    }
+
+    @GetMapping("get-so-luong-hoa-don-tat-ca")
+    ResponseEntity<Integer> getSoLuongHoaDonTatCa() {
+        return ResponseEntity.ok(hoaDonRepo.getSoLuongHoaDon());
+    }
+
+    @GetMapping("get-so-luong-hoa-don-xac-nhan")
+    ResponseEntity<Integer> getSoLuongHoaDonXacNhan() {
+        return ResponseEntity.ok(hoaDonRepo.getSoLuongHoaDonByTrangThai(HoaDonRepository.CHO_XAC_NHAN));
+    }
+
+    @GetMapping("get-so-luong-hoa-don-dang-chuan-bi")
+    ResponseEntity<Integer> getSoLuongHoaDonDangChuanBi() {
+        return ResponseEntity.ok(hoaDonRepo.getSoLuongHoaDonByTrangThai(HoaDonRepository.DANG_CHUAN_BI));
+    }
+
+    @GetMapping("get-so-luong-hoa-don-hoan-thanh")
+    ResponseEntity<Integer> getSoLuongHoaDonHoanThanh() {
+        return ResponseEntity.ok(hoaDonRepo.getSoLuongHoaDonByTrangThai(HoaDonRepository.HOAN_THANH_MON));
+    }
+
+    @GetMapping("get-so-luong-hoa-don-da-thanh-toan")
+    ResponseEntity<Integer> getSoLuongHoaDonDaThanhToan() {
+        return ResponseEntity.ok(hoaDonRepo.getSoLuongHoaDonByTrangThai(HoaDonRepository.DA_THANH_TOAN));
+    }
 
 }
 

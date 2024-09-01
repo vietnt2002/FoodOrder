@@ -21,6 +21,6 @@ public interface GioHangRepository extends JpaRepository<GioHang, String> {
     @Query("select gh from GioHang gh where gh.idBan.id = ?1 and gh.idMonAn.id = ?2 and gh.trangThai = ?3")
     GioHang findByIdBanAndIdMonAn(String idBan, String idMonAn, int trangThai);
 
-    @Query("select gh from GioHang gh where gh.idBan.id = ?1 and gh.trangThai = 0")
-    List<GioHang> getAllByIdBan(String idBan);
+    @Query("select gh from GioHang gh where gh.idBan.id = ?1 and gh.trangThai = ?2")
+    List<GioHang> getAllByIdBan(String idBan, int trangThai);
 }

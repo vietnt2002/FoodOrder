@@ -307,7 +307,9 @@
                         '<span>'+ tenMon +'</span>' +
                         '</h5>' +
                         '<h5 class="d-flex justify-content-between">' +
-                        '<span class="text-primary">'+ giaTien +' vnd</span>' +
+                        '<span class="text-primary">'+
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(giaTien) +
+                        '</span>' +
                         '</h5>' +
                         '<small class="fst-italic">'+ moTa +'</small>' +
                         '<div>' +

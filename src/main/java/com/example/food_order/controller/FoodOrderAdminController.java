@@ -2,6 +2,7 @@ package com.example.food_order.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -31,6 +32,11 @@ public class FoodOrderAdminController {
     @GetMapping("quan-ly-hoa-don")
     public String getGoiMon (){
         return "/view_admin/quan-ly-hoa-don.jsp";
+    }
+
+    @GetMapping("chi-tiet-hoa-don/{id}")
+    public String getChiTietHoaDon (@PathVariable("id") String id){
+        return "/view_admin/chi-tiet-hoa-don.jsp";
     }
 
 }

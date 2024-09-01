@@ -36,6 +36,23 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .soLuongHD {
+            position: absolute;
+            top: -9px;
+            right: 0px;
+            background: red;
+            color: white;
+            font-weight: bold;
+            width: 25px;
+            border-radius: 50%;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
 <div class="container-xxl position-relative bg-white d-flex p-0">
@@ -47,18 +64,18 @@
 
         <!--    Main    -->
         <h3 class="mt-3">Danh sách hóa đơn</h3>
+        <audio id="tieng-chuong" src="/images/hieu-ung-am-thanh-dau-tich.com.mp3" preload="auto"></audio>
         <div class="row">
 
         </div>
-
         <div class="row mt-5">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="tat-ca-tab" data-bs-toggle="tab" data-bs-target="#tat-ca" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Tất cả</button>
-                    <button class="nav-link" id="xac-nhan-tab" data-bs-toggle="tab" data-bs-target="#xac-nhan" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Xác nhận món</button>
-                    <button class="nav-link" id="dang-chuan-bi-tab" data-bs-toggle="tab" data-bs-target="#dang-chuan-bi" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Đang chuẩn bị</button>
-                    <button class="nav-link" id="hoan-thanh-tab" data-bs-toggle="tab" data-bs-target="#hoan-thanh" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Hoàn thành</button>
-                    <button class="nav-link" id="da-thanh-toan-tab" data-bs-toggle="tab" data-bs-target="#da-thanh-toan" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Hoàn thành</button>
+                    <button class="nav-link active" id="tat-ca-tab" data-bs-toggle="tab" data-bs-target="#tat-ca" type="button" role="tab" aria-controls="nav-home" aria-selected="true" style="position: relative">Tất cả <span class="soLuongHD" id="so-luong-tat-ca"></span></button>
+                    <button class="nav-link" id="xac-nhan-tab" data-bs-toggle="tab" data-bs-target="#xac-nhan" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" style="position: relative">Xác nhận món <span class="soLuongHD" id="so-luong-xac-nhan"></span></button>
+                    <button class="nav-link" id="dang-chuan-bi-tab" data-bs-toggle="tab" data-bs-target="#dang-chuan-bi" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" style="position: relative">Đang chuẩn bị <span class="soLuongHD" id="so-luong-chuan-bi"></span></button>
+                    <button class="nav-link" id="hoan-thanh-tab" data-bs-toggle="tab" data-bs-target="#hoan-thanh" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" style="position: relative">Hoàn thành <span class="soLuongHD" id="so-luong-hoan-thanh"></span></button>
+                    <button class="nav-link" id="da-thanh-toan-tab" data-bs-toggle="tab" data-bs-target="#da-thanh-toan" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" style="position: relative">Đã thanh toán <span class="soLuongHD" id="so-luong-thanh-toan"></span></button>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -158,6 +175,82 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 </div>
 
+
+<script
+        src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    //Load hóa đơn tất cả
+    var count = 1;
+    function loadDanhSachHoaDonTatCa() {
+        count++;
+        console.log(count);
+        let html = '';
+        fetch("/api/food/get-all-hoa-don", {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(resp => {
+                resp.forEach((hoaDon, i) => {
+                    var maHoaDon = hoaDon.ma || 'N/A';
+                    var tenNhanVien = hoaDon.idNhanVien.hoTen || 'N/A';
+                    var tenBan = hoaDon.idBan.tenBan || 'N/A';
+                    var ngayTao = hoaDon.ngayTao || 'N/A';
+                    var tongTien = hoaDon.tongTien || '<span class="badge rounded-pill bg-warning text-dark">Chưa thanh toán</span>';
+                    var trangThai = '';
+                    if (hoaDon.trangThai === 0){
+                        trangThai = '<span class="badge bg-warning text-light">Xác nhận món</span>';
+                        var checkTiengChuong = localStorage.getItem('checkTiengChuong');
+                        if (checkTiengChuong){
+                            const tiengChuong = document.getElementById("tieng-chuong");
+                            tiengChuong.play();
+                            localStorage.setItem('checkTiengChuong', false);
+                        }
+                    } else if (hoaDon.trangThai === 1){
+                        trangThai = '<span class="badge bg-primary text-light">Đang chuẩn bị</span>';
+                    } else if (hoaDon.trangThai === 2){
+                        trangThai = '<span class="badge bg-info text-light">Hoàn thành</span>';
+                    } else if (hoaDon.trangThai === 3){
+                        trangThai = '<span class="badge bg-success text-light">Đã thanh toán</span>';
+                    }
+
+                    html +=
+                        '<tr>' +
+                        '<td>' + (i + 1) + '</td>' +
+                        '<td>' + maHoaDon + '</td>' +
+                        '<td>' + tenNhanVien + '</td>' +
+                        '<td>' +  'Bàn ' + tenBan + '</td>' +
+                        '<td>' + ngayTao + '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tongTien) +
+                        '</td>' +
+                        '<td>' + trangThai + '</td>' +
+                        '<td>' +
+                        '<div class="d-inline">' +
+                        '<a href="/admin/chi-tiet-hoa-don/'+ hoaDon.id +'" class="btn btn-outline-info" style="width: 50px; height: 30px; display: flex; justify-content: center; align-items: center"><i class="bi bi-eye-fill"></i></a>' +
+                        '</div>' +
+                        '</td>' +
+                        '</tr>';
+                });
+                document.getElementById("tblHoaDonTatCa").innerHTML = html;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+    loadDanhSachHoaDonTatCa();
+    setInterval(loadDanhSachHoaDonTatCa, 2000);
+</script>
+
 <script>
     //Load hóa đơn đã thanh toán
     function loadDanhSachHoaDonDaThanhToan() {
@@ -179,7 +272,7 @@
                     var maHoaDon = hoaDon.ma || 'N/A';
                     var tenNhanVien = hoaDon.idNhanVien.hoTen || 'N/A';
                     var tenBan = hoaDon.idBan.tenBan || 'N/A';
-                    var ngayTao = hoaDon.idNhanVien.hoTen || 'N/A';
+                    var ngayTao = hoaDon.ngayTao || 'N/A';
                     var tongTien = hoaDon.tongTien || '<span class="badge rounded-pill bg-warning text-dark">Chưa thanh toán</span>';
                     var trangThai = '';
                     if (hoaDon.trangThai === 0){
@@ -197,9 +290,11 @@
                         '<td>' + (i + 1) + '</td>' +
                         '<td>' + maHoaDon + '</td>' +
                         '<td>' + tenNhanVien + '</td>' +
-                        '<td>' + tenBan + '</td>' +
+                        '<td>' + 'Bàn ' + tenBan + '</td>' +
                         '<td>' + ngayTao + '</td>' +
-                        '<td>' + tongTien + '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tongTien) +
+                        '</td>' +
                         '<td>' + trangThai + '</td>' +
                         '<td>' +
                         '<div class="d-inline">' +
@@ -238,7 +333,7 @@
                     var maHoaDon = hoaDon.ma || 'N/A';
                     var tenNhanVien = hoaDon.idNhanVien.hoTen || 'N/A';
                     var tenBan = hoaDon.idBan.tenBan || 'N/A';
-                    var ngayTao = hoaDon.idNhanVien.hoTen || 'N/A';
+                    var ngayTao = hoaDon.ngayTao || 'N/A';
                     var tongTien = hoaDon.tongTien || '<span class="badge rounded-pill bg-warning text-dark">Chưa thanh toán</span>';
                     var trangThai = '';
                     if (hoaDon.trangThai === 0){
@@ -256,9 +351,11 @@
                         '<td>' + (i + 1) + '</td>' +
                         '<td>' + maHoaDon + '</td>' +
                         '<td>' + tenNhanVien + '</td>' +
-                        '<td>' + tenBan + '</td>' +
+                        '<td>' + 'Bàn ' + tenBan + '</td>' +
                         '<td>' + ngayTao + '</td>' +
-                        '<td>' + tongTien + '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tongTien) +
+                        '</td>' +
                         '<td>' + trangThai + '</td>' +
                         '<td>' +
                         '<div class="d-inline">' +
@@ -297,7 +394,7 @@
                     var maHoaDon = hoaDon.ma || 'N/A';
                     var tenNhanVien = hoaDon.idNhanVien.hoTen || 'N/A';
                     var tenBan = hoaDon.idBan.tenBan || 'N/A';
-                    var ngayTao = hoaDon.idNhanVien.hoTen || 'N/A';
+                    var ngayTao = hoaDon.ngayTao || 'N/A';
                     var tongTien = hoaDon.tongTien || '<span class="badge rounded-pill bg-warning text-dark">Chưa thanh toán</span>';
                     var trangThai = '';
                     if (hoaDon.trangThai === 0){
@@ -315,9 +412,11 @@
                         '<td>' + (i + 1) + '</td>' +
                         '<td>' + maHoaDon + '</td>' +
                         '<td>' + tenNhanVien + '</td>' +
-                        '<td>' + tenBan + '</td>' +
+                        '<td>' + 'Bàn ' + tenBan + '</td>' +
                         '<td>' + ngayTao + '</td>' +
-                        '<td>' + tongTien + '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tongTien) +
+                        '</td>' +
                         '<td>' + trangThai + '</td>' +
                         '<td>' +
                         '<div class="d-inline">' +
@@ -356,7 +455,7 @@
                     var maHoaDon = hoaDon.ma || 'N/A';
                     var tenNhanVien = hoaDon.idNhanVien.hoTen || 'N/A';
                     var tenBan = hoaDon.idBan.tenBan || 'N/A';
-                    var ngayTao = hoaDon.idNhanVien.hoTen || 'N/A';
+                    var ngayTao = hoaDon.ngayTao || 'N/A';
                     var tongTien = hoaDon.tongTien || '<span class="badge rounded-pill bg-warning text-dark">Chưa thanh toán</span>';
                     var trangThai = '';
                     if (hoaDon.trangThai === 0){
@@ -376,7 +475,9 @@
                         '<td>' + tenNhanVien + '</td>' +
                         '<td>' + tenBan + '</td>' +
                         '<td>' + ngayTao + '</td>' +
-                        '<td>' + tongTien + '</td>' +
+                        '<td>' +
+                        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tongTien) +
+                        '</td>' +
                         '<td>' + trangThai + '</td>' +
                         '<td>' +
                         '<div class="d-inline">' +
@@ -395,62 +496,118 @@
 </script>
 
 <script>
-    //Load hóa đơn tất cả
-    function loadDanhSachHoaDonTatCa() {
-        let html = '';
-        fetch("/api/food/get-all-hoa-don", {
+    //Load số lượng hóa đơn đã thanh toán
+    function loadSoLuongHoaDonDaThanhToan() {
+        fetch(`/api/food/get-so-luong-hoa-don-da-thanh-toan`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            .then(response => response.json())
+            .then(soLuong => {
+                if (soLuong == null || soLuong == ''){
+                    document.getElementById("so-luong-thanh-toan").textContent = 0;
+                }else {
+                    document.getElementById("so-luong-thanh-toan").textContent = soLuong;
                 }
-                return response.json();
-            })
-            .then(resp => {
-                resp.forEach((hoaDon, i) => {
-                    var maHoaDon = hoaDon.ma || 'N/A';
-                    var tenNhanVien = hoaDon.idNhanVien.hoTen || 'N/A';
-                    var tenBan = hoaDon.idBan.tenBan || 'N/A';
-                    var ngayTao = hoaDon.idNhanVien.hoTen || 'N/A';
-                    var tongTien = hoaDon.tongTien || '<span class="badge rounded-pill bg-warning text-dark">Chưa thanh toán</span>';
-                    var trangThai = '';
-                    if (hoaDon.trangThai === 0){
-                        trangThai = '<span class="badge bg-warning text-light">Xác nhận món</span>';
-                    } else if (hoaDon.trangThai === 1){
-                        trangThai = '<span class="badge bg-primary text-light">Đang chuẩn bị</span>';
-                    } else if (hoaDon.trangThai === 2){
-                        trangThai = '<span class="badge bg-info text-light">Hoàn thành</span>';
-                    } else if (hoaDon.trangThai === 3){
-                        trangThai = '<span class="badge bg-success text-light">Đã thanh toán</span>';
-                    }
 
-                    html +=
-                        '<tr>' +
-                        '<td>' + (i + 1) + '</td>' +
-                        '<td>' + maHoaDon + '</td>' +
-                        '<td>' + tenNhanVien + '</td>' +
-                        '<td>' + tenBan + '</td>' +
-                        '<td>' + ngayTao + '</td>' +
-                        '<td>' + tongTien + '</td>' +
-                        '<td>' + trangThai + '</td>' +
-                        '<td>' +
-                        '<div class="d-inline">' +
-                        '<a href="/admin/chi-tiet-hoa-don/'+ hoaDon.id +'" class="btn btn-outline-info" style="width: 50px; height: 30px; display: flex; justify-content: center; align-items: center"><i class="bi bi-eye-fill"></i></a>' +
-                        '</div>' +
-                        '</td>' +
-                        '</tr>';
-                });
-                document.getElementById("tblHoaDonTatCa").innerHTML = html;
             })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
+            .catch(error => console.error('Error:', error));
     }
-    loadDanhSachHoaDonTatCa();
+    loadSoLuongHoaDonDaThanhToan();
+</script>
+
+<script>
+    //Load số lượng hóa đơn hoàn thành
+    function loadSoLuongHoaDonHoanThanh() {
+        fetch(`/api/food/get-so-luong-hoa-don-hoan-thanh`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(soLuong => {
+                if (soLuong == null || soLuong == ''){
+                    document.getElementById("so-luong-hoan-thanh").textContent = 0;
+                }else {
+                    document.getElementById("so-luong-hoan-thanh").textContent = soLuong;
+                }
+
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    loadSoLuongHoaDonHoanThanh();
+</script>
+
+<script>
+    //Load số lượng hóa đơn đang chuẩn bị
+    function loadSoLuongHoaDonDangChuanBi() {
+        fetch(`/api/food/get-so-luong-hoa-don-dang-chuan-bi`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(soLuong => {
+                if (soLuong == null || soLuong == ''){
+                    document.getElementById("so-luong-chuan-bi").textContent = 0;
+                }else {
+                    document.getElementById("so-luong-chuan-bi").textContent = soLuong;
+                }
+
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    loadSoLuongHoaDonDangChuanBi();
+</script>
+
+<script>
+    //Load số lượng hóa đơn xác nhận
+    function loadSoLuongHoaDonXacNhan() {
+        fetch(`/api/food/get-so-luong-hoa-don-xac-nhan`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(soLuong => {
+                if (soLuong == null || soLuong == ''){
+                    document.getElementById("so-luong-xac-nhan").textContent = 0;
+                }else {
+                    document.getElementById("so-luong-xac-nhan").textContent = soLuong;
+                }
+
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    loadSoLuongHoaDonXacNhan();
+</script>
+
+<script>
+    //Load số lượng hóa đơn tất cả
+    function loadSoLuongHoaDonTatCa() {
+        fetch(`/api/food/get-so-luong-hoa-don-tat-ca`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(soLuong => {
+                if (soLuong == null || soLuong == ''){
+                    document.getElementById("so-luong-tat-ca").textContent = 0;
+                }else {
+                    document.getElementById("so-luong-tat-ca").textContent = soLuong;
+                }
+
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    loadSoLuongHoaDonTatCa();
 </script>
 
 <script>
