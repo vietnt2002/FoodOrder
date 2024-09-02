@@ -121,8 +121,10 @@ INSERT INTO Ban(TenBan, QRCode, NgayTao, TrangThai) VALUES (N'Bàn 1', 'vvv.sss'
 UPDATE dbo.Ban SET Url = 'http://localhost:8080/client/menu'
 
 
-SELECT * FROM dbo.HoaDon
+SELECT * FROM dbo.HoaDon WHERE IdBan ='B139DF61-B77F-45DD-9001-9554C4E6E412' AND TrangThai NOT LIKE 3
 SELECT * FROM dbo.HoaDonChiTiet
+
+UPDATE dbo.HoaDonChiTiet SET TrangThai = 1
 
 DELETE FROM dbo.HoaDonChiTiet
 DELETE FROM dbo.HoaDon

@@ -38,17 +38,6 @@
             </div>
             <a href="/admin/quan-ly-hoa-don" class="nav-item nav-link"><i class="bi bi-journal-text"></i>Quản lý hóa đơn</a>
             <a href="/admin/quan-ly-ban" class="nav-item nav-link"><i class="bi bi-table"></i>Quản lý bàn</a>
-            <a href="/admin/quan-ly-nhan-vien" class="nav-item nav-link"><i class="bi bi-person-bounding-box"></i>Nhân viên</a>
-            <a href="/admin/quan-ly-khach-hang" class="nav-item nav-link"><i class="bi bi-person-bounding-box"></i>Khách hàng</a>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
-                <div class="dropdown-menu bg-transparent border-0">
-                    <a href="signin.html" class="dropdown-item">Sign In</a>
-                    <a href="signup.html" class="dropdown-item">Sign Up</a>
-                    <a href="404.html" class="dropdown-item">404 Error</a>
-                    <a href="blank.html" class="dropdown-item">Blank Page</a>
-                </div>
-            </div>
         </div>
     </nav>
 </div>
